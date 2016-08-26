@@ -187,7 +187,7 @@ var WebSocket = function () {
               case 56:
                 if (!messageSuccess) {
                   this.queuedRequest.push({
-                    reqData: reqData,
+                    data: reqData,
                     onmessage: onmessage
                   });
                 }
@@ -216,7 +216,7 @@ var WebSocket = function () {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!respData.subscribe) {
+                if (!reqData.subscribe) {
                   _context2.next = 29;
                   break;
                 }

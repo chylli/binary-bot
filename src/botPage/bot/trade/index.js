@@ -1,4 +1,4 @@
-import observer from 'binary-common-utils/lib/observer';
+import { observer } from 'binary-common-utils/lib/observer';
 import Translator from '../../../common/translator';
 
 export default class Trade {
@@ -21,12 +21,10 @@ export default class Trade {
       observer.emit('ui.log.info', this.translator.translateText('Purchased') + ': ' + contract.longcode);
       observer.emit('trade.purchase', purchasedContract);
       this.contractId = purchasedContract.contract_id;
-      this.api.unsubscribeFromAllProposals().then(() => {
-      }, (error) => {
-        observer.emit('api.error', error);
-      });
+      this.api.unsubscribeFromAllProposals();
       this.subscribeToOpenContract();
     };
+		apiBuy((await observer.register('api.buy')).data);
     apiBuy((await observer.register('api.buy', {
       type: 'buy',
       unregister: [['api.buy', apiBuy], 'trade.purchase'],
@@ -54,17 +52,6 @@ export default class Trade {
       }
       observer.emit('trade.update', contract);
     };
-		observer.keepAlive(observer.register('api.proposal_open_contract', {
-      type: 'proposal_open_contract',
-      unregister: [
-        ['api.proposal_open_contract', apiProposalOpenContract],
-        'trade.update',
-        'strategy.tradeUpdate',
-        'trade.finish',
-        'strategy.finish',
-      ],
-    }), apiProposalOpenContract);
-    this.runningObservations.push(['api.proposal_open_contract', apiProposalOpenContract]);
     return true;
   }
   getTheContractInfoAfterSell() {
